@@ -1,4 +1,3 @@
-
 /* Yaesu G-5500 Antenna Rotator Controller
  *      * EasycommII protocol compatible (barebones)
  * 
