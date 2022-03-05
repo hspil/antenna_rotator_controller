@@ -14,8 +14,8 @@ int el_up = 4;
 int el_down = 5;
 
 //Rotator feedback signals
-int az_pos = A0;
-int el_pos = A1;
+int az_pos = A2;
+int el_pos = A3;
 
 struct coordinates{
 	double az;
@@ -26,7 +26,7 @@ coordinates current;
 coordinates desired;
 
 
-double tolerance = 0.1; //degrees
+const double tolerance = 0.1; //degrees
 
 void setup() {
 	Serial.begin(115200);
@@ -65,12 +65,12 @@ void loop() {
 			Serial.println(desired.az, desired.el);
 		}
 	}
-	
+    
+    
 	//Check current position
-	
-	//map analogRead ADC value between 0 and 1023 to voltage between 0 and 5 volts, then map votage to angle
-	current.az = 180*((5.0*analogRead(az_pos)/1023.0) - 2);	//2 to 4.5 VDC is 0 to 450°
-	current.el = 72*((5.0*analogRead(el_pos)/1023.0) - 2);	//2 to 4.5 VDC is 0 to 180°
+	//linear map analogRead ADC value between 0 and 1023 to voltage between 0 and 5 volts, then linear map votage to angle
+	current.az = 450/(4.5-2) * ((5.0*analogRead(az_pos)/1023.0) - 2);	//2 to 4.5 VDC is 0 to 450°
+	current.el = 180/(4.5-2) * ((5.0*analogRead(el_pos)/1023.0) - 2);	//2 to 4.5 VDC is 0 to 180°
 	
 	
 	//Azimuth control
@@ -80,7 +80,7 @@ void loop() {
 		digitalWrite(az_right, HIGH);
 	}
 	//too small: left
-	else if(current.az - desired.az < tolerance) {
+	else if(current.az - desired.az < -tolerance) {
 		digitalWrite(az_right, LOW);
 		digitalWrite(az_left, HIGH);
 	}
@@ -91,12 +91,12 @@ void loop() {
 	
 	
 	//Elevation control
-	if(current.az - desired.az > tolerance) {
-		digitalWrite(az_left, LOW);
-		digitalWrite(az_right, HIGH);
+	if(current.el - desired.el > tolerance) {
+		digitalWrite(el_down, HIGH);
+		digitalWrite(el_up, LOW);
 	}
 	//too small: left
-	else if(current.az - desired.az < tolerance) {
+	else if(current.el - desired.el < -tolerance) {
 		digitalWrite(el_down, LOW);
 		digitalWrite(el_up, HIGH);
 	}
