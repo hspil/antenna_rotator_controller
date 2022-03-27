@@ -26,7 +26,7 @@ coordinates current;
 coordinates desired;
 
 
-const double tolerance = 0.1; //degrees
+const double tolerance = 5; //degrees
 
 void setup() {
 	Serial.begin(115200);
@@ -68,21 +68,21 @@ void loop() {
     
     
 	//Check current position
-	//linear map analogRead ADC value between 0 and 1023 to voltage between 0 and 5 volts, then linear map votage to angle
-	current.az = 450/(4.5-2) * ((5.0*analogRead(az_pos)/1023.0) - 2);	//2 to 4.5 VDC is 0 to 450°
-	current.el = 180/(4.5-2) * ((5.0*analogRead(el_pos)/1023.0) - 2);	//2 to 4.5 VDC is 0 to 180°
+	//linearly map analogRead ADC value between 0 and 1023 to rotator angles
+	current.az = 360.0 * analogRead(az_pos)/1023.0 - 180.0;
+	current.el = 180.0 * analogRead(el_pos)/1023.0;
 	
 	
 	//Azimuth control
 	//azimuth angle too big: turn right
 	if(current.az - desired.az > tolerance) {
-		digitalWrite(az_left, LOW);
-		digitalWrite(az_right, HIGH);
+		digitalWrite(az_right, LOW);
+        digitalWrite(az_left, HIGH);
 	}
 	//too small: left
 	else if(current.az - desired.az < -tolerance) {
-		digitalWrite(az_right, LOW);
-		digitalWrite(az_left, HIGH);
+		digitalWrite(az_left, LOW);
+        digitalWrite(az_right, HIGH);
 	}
 	else {
 		digitalWrite(az_right, LOW);
