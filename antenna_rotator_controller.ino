@@ -26,7 +26,7 @@ coordinates current;
 coordinates desired;
 
 
-const double tolerance = 5; //degrees
+const double tolerance = 1; //degrees
 
 void setup() {
 	Serial.begin(115200);
@@ -51,19 +51,31 @@ void loop() {
 	//check for command
 	if(Serial.available()) {
 		String command = Serial.readStringUntil('\n');
-		Serial.println(command);
 		//Parse and respond to each command
 		
 		//query position
-		if(command == "AZ EL") {
-			Serial.println("+" + String(current.az) + " " + String(current.el));
+		if(command == "AZ EL ") {
+			Serial.println("AZ" + String(current.az) + " EL" + String(current.el));
 		}
+        // Stop Azimuth Stop Elevation
+        else if (command == "SA SE ") {
+            digitalWrite(az_right, LOW);
+            digitalWrite(az_left, LOW);
+            digitalWrite(el_up, LOW);
+            digitalWrite(el_down, LOW);
+        }
 		//set position
-		else if(command.substring(0, 2) == "AZ" && command.substring(8, 10) == "AZ") {
+		/*else if(command.substring(0, 2) == "AZ" && command.substring(8, 10) == "EL") {
 			desired.az = command.substring(2, 7).toDouble();
 			desired.el = command.substring(10, 15).toDouble();
 			Serial.println(desired.az, desired.el);
-		}
+		}*/
+        else if (command.substring(0,2) == "AZ" && command.indexOf("EL") != -1) {
+            desired.az = command.substring(2, command.indexOf("EL")).toDouble();
+            desired.el = command.substring(command.indexOf("EL") + 2).toDouble();
+            Serial.println(desired.az);
+            Serial.println(desired.el);
+        }
 	}
     
     
