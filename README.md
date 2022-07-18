@@ -1,4 +1,4 @@
-# Yaesu G-5400B Rotator MinicomII Controller Interface
+# Yaesu G-5400B Rotator Minicom II Controller Interface
 
 Arduino controller that implements Minicom II protocol to allow computer control of the rotator.
 [Rotator manual](http://n3ujj.com/manuals/YAESU%20g5400b.pdf)
